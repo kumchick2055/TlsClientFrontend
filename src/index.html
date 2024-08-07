@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="h-dvh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./output.css">
+    <style>
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #223c50;
+            border-radius: 10px;
+        }
+        button{
+            outline: none;
+        }
+    </style>
+</head>
+<body class="h-full">
+    <div id="app" class="h-full text-sm">
+        <div class="grid grid-cols-2 h-full bg-neutral-900 text-white relative">
+            <div class="m-1 grid grid-rows-2" style="grid-template-rows: auto 1fr;">
+                <div class="">
+                    <button id="clearHistory" class="
+                        w-full
+                        bg-indigo-700
+                        hover:bg-indigo-800
+                        text-white
+                        p-1
+                    ">Очистить историю</button>
+                </div>
+                <div class="
+                overflow-y-scroll relative mt-1">
+                    <div class="absolute w-full">
+
+                        <table class="w-full  relative bg-gray-800 shadow-md rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-700 text-left text-gray-300">
+                                    <th id="time" class="py-2 px-4 font-medium">Время</th>
+                                    <th id="status" class="py-2 px-4 font-medium">Статус</th>
+                                    <th id="method" class="py-2 px-4 font-medium">Метод</th>
+                                    <th id="url" class="py-2 px-4 font-medium">Ссылка</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyBody" class="text-gray-200 hover:cursor-pointer">
+    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="h-full flex flex-col border-l-2 border-gray-700">
+                <div class="border-b-2 border-gray-700">
+                    <div class="flex">
+                        <button id="requestButton" class="px-4 py-1 m-0 bg-indigo-700">Отправлено</button>
+                        <button id="responseButton" class="px-4 py-1 m-0 bg-indigo-900">Получено</button>
+                    </div>
+                </div>
+                <div class="p-1 flex-1">
+                    <div class="h-full flex flex-col">
+                        <div class="flex-1">
+                            <textarea readonly class="w-full h-full resize-none bg-gray-600"></textarea>
+                        </div>
+                        <div class="mt-2  mb-1">
+                            <button id="openInTxt" class="px-4 py-1 m-0 bg-indigo-700 hover:bg-indigo-800 w-full">Открыть в блокноте</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./bundle.js"></script>
+</body>
+</html>
