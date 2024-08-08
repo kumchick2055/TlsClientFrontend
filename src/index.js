@@ -1,6 +1,11 @@
 import { I18n } from "i18n-js";
 
-const listOfRequest = [];
+
+var listOfRequests = {};
+var currentViewId = undefined;
+var currentState = "request";
+
+
 
 const i18n = new I18n({
     "ru":{
@@ -16,14 +21,27 @@ const i18n = new I18n({
     }
 });
 
+function changeData(itemId){
+    if(itemId === -1){
+        document.querySelector('#viewerData').value = '';
+    } else{
+        const viewData = currentState === "request" ? listOfRequests[itemId].request : listOfRequests[itemId].response; 
+        
+    
+        document.querySelector('#viewerData').value = viewData;
+    }
+}
 
-function appendRequestData(time, status, method, url) {
+
+function appendRequestData(time, status, method, url, requestData, responseData) {
     // Получаем элемент tbody с id historyBody
     const tbody = document.getElementById('historyBody');
+    const currentId = crypto.randomUUID();
 
     // Создаем новый элемент tr
     const tr = document.createElement('tr');
     tr.classList.add('hover:bg-gray-600');
+    tr.setAttribute('id', currentId);
 
     // Создаем ячейки для каждой части данных
     const timeCell = document.createElement('td');
@@ -44,8 +62,9 @@ function appendRequestData(time, status, method, url) {
     // Создаем ссылку внутри ячейки URL
     const link = document.createElement('a');
     link.href = url;
-    link.classList.add('text-blue-400', 'underline');
+    link.classList.add('text-blue-400', 'underline', 'pointer-events-none');
     link.textContent = url;
+
 
     // Добавляем ссылку в ячейку URL
     urlCell.appendChild(link);
@@ -56,41 +75,83 @@ function appendRequestData(time, status, method, url) {
     tr.appendChild(methodCell);
     tr.appendChild(urlCell);
 
+
+    listOfRequests[currentId] = {
+        request: requestData,
+        response: responseData
+    };
+
+
+    console.log(listOfRequests);
+
     // Добавляем строку tr в tbody
     tbody.appendChild(tr);
-}
+    tbody.onclick = (event) => {
+        const clickElementId = event.target.parentElement.getAttribute('id')
+        currentViewId = clickElementId;
 
-// Пример использования функции
-appendRequestData('2:00 PM', 'Успешно', 'DELETE', 'https://example.com/path/to/resource');
+
+        changeData(clickElementId);
+    }
+}
 
 
 i18n.locale = navigator.language;
 
+
+
 window.onload = () => {
-    document.querySelector('#requestButton').innerText = i18n.t('requestButton', {defaultValue: "Request"});
+    const requestButton = document.querySelector('#requestButton');
+    const responseButton = document.querySelector('#responseButton');
+    const clearHistory = document.querySelector('#clearHistory');
+    const openinText = document.querySelector('#openInTxt');
 
-    document.querySelector('#requestButton').onclick = () => {
-        document.querySelector('#responseButton').classList.remove('bg-indigo-700');
-        document.querySelector('#responseButton').classList.add('bg-indigo-900');
 
+    openinText.onclick = async () => {
+        const viewData = currentState === "request" ? listOfRequests[currentViewId].request : listOfRequests[currentViewId].response; 
 
-        document.querySelector('#requestButton').classList.remove('bg-indigo-900');
-        document.querySelector('#requestButton').classList.add('bg-indigo-700');
+        await window.openintxt(viewData);
+    };
+
+    
+    requestButton.onclick = () => {
+        responseButton.classList.remove('bg-indigo-700');
+        responseButton.classList.add('bg-indigo-900');
+        
+        
+        requestButton.classList.remove('bg-indigo-900');
+        requestButton.classList.add('bg-indigo-700');
+
+        currentState = "request";
+
+        changeData(currentViewId);
     }
+    
+    responseButton.onclick = () => {
+        requestButton.classList.remove('bg-indigo-700');
+        requestButton.classList.add('bg-indigo-900');
+        
+        
+        responseButton.classList.remove('bg-indigo-900');
+        responseButton.classList.add('bg-indigo-700');
 
-    document.querySelector('#responseButton').onclick = () => {
-        document.querySelector('#requestButton').classList.remove('bg-indigo-700');
-        document.querySelector('#requestButton').classList.add('bg-indigo-900');
+        currentState = "response";
 
-
-        document.querySelector('#responseButton').classList.remove('bg-indigo-900');
-        document.querySelector('#responseButton').classList.add('bg-indigo-700');
+        changeData(currentViewId)
     }
+    
+    
+    
+    
+    requestButton.innerText = i18n.t('requestButton', {defaultValue: "Request"});
+    responseButton.innerText = i18n.t('responseButton', {defaultValue: "Response"});
 
-    document.querySelector('#responseButton').innerText = i18n.t('responseButton', {defaultValue: "Response"});
-    document.querySelector('#clearHistory').innerText = i18n.t('clearHistory', {defaultValue: "Clear History"});
+    clearHistory.innerText = i18n.t('clearHistory', {defaultValue: "Clear History"});
 
-    document.querySelector('#clearHistory').onclick = () => {
+    clearHistory.onclick = () => {
+        listOfRequests = {};
+        changeData(-1);
+
         const tbody = document.querySelector('#historyBody');
 
 
